@@ -65,7 +65,91 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    "use strict";
+
+  const nameInput = document.querySelector('.add-form-name');
+  const textInput = document.querySelector('.add-form-text');
+  const addButton = document.querySelector('.add-form-button');
+  const commentsList = document.querySelector('.comments');
+
+  function getCurrentDate() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  }
+
+  function addComment() {
+    const name = nameInput.value.trim();
+    const text = textInput.value.trim();
+
+    if (!name || !text) {
+        alert('Пожалуйста, заполните имя и комментарий');
+        return;
+    }
+
+    const li = document.createElement('li');
+    li.className = 'comment';
+
+    const header = document.createElement('div');
+    header.className = 'comment-header';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.textContent = name;
+
+    const dateDiv = document.createElement('div');
+    dateDiv.textContent = getCurrentDate();
+
+    header.appendChild(nameDiv);
+    header.appendChild(dateDiv);
+
+    const body = document.createElement('div');
+    body.className = 'comment-body';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'comment-text';
+    textDiv.textContent = text;
+
+    body.appendChild(textDiv);
+
+    const footer = document.createElement('div');
+    footer.className = 'comment-footer';
+
+    const likes = document.createElement('div');
+    likes.className = 'likes';
+
+    const counter = document.createElement('span');
+    counter.className = 'likes-counter';
+    counter.textContent = '0';
+
+    const likeBtn = document.createElement('button');
+    likeBtn.className = 'like-button';
+
+    likes.appendChild(counter);
+    likes.appendChild(likeBtn);
+    footer.appendChild(likes);
+
+    li.appendChild(header);
+    li.appendChild(body);
+    li.appendChild(footer);
+
+    commentsList.appendChild(li);
+
+    nameInput.value = '';
+    textInput.value = '';
+  }
+
+  addButton.addEventListener('click', addComment);
+
+  textInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        addComment();
+    }
+  });
     console.log("It works!");
   </script>
 </html>
