@@ -87,6 +87,32 @@
 
     let nextId = 3;
 
+    function escapeHtml(text) {
+      return text
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function quoteComment(index) {
+      const comment = commentsData[index];
+      const nameInput = document.querySelector('.add-form-name');
+      const textInput = document.querySelector('.add-form-text');
+      
+      const safeName = escapeHtml(comment.name);
+      const safeText = escapeHtml(comment.text);
+      
+      nameInput.value = safeName;
+      
+      const quotedText = safeText.split('\n').map(line => `> ${line}`).join('\n');
+      textInput.value = `${quotedText}\n\n`;
+      
+      textInput.focus();
+      textInput.setSelectionRange(textInput.value.length, textInput.value.length);
+    }
+
+
     function renderComments() {
       const commentsList = document.querySelector('.comments');
       
@@ -96,6 +122,13 @@
         const li = document.createElement('li');
         li.className = 'comment';
         li.dataset.index = index;
+
+        li.addEventListener('click', function(e) {
+          if (e.target.closest('.like-button')) {
+            return;
+          }
+          quoteComment(index);
+        });
         
         const header = document.createElement('div');
         header.className = 'comment-header';
@@ -148,6 +181,8 @@
       const button = event.target;
       
       if (!button.classList.contains('like-button')) return;
+
+      event.stopPropagation();
       
       const index = parseInt(button.dataset.index);
       const comment = commentsData[index];
@@ -186,8 +221,8 @@
       const nameInput = document.querySelector('.add-form-name');
       const textInput = document.querySelector('.add-form-text');
       
-      const name = nameInput.value.trim();
-      const text = textInput.value.trim();
+      const name = escapeHtml(nameInput.value.trim());
+      const text = escapeHtml(textInput.value.trim());
       
       if (!name || !text) {
         alert('Пожалуйста, заполните имя и комментарий');
