@@ -4,9 +4,16 @@ import {
     initQuoteListeners,
     initAddCommentListener,
 } from './handlers.js'
+import { fetchComments } from './api.js'
+import { setComments } from './data.js'
 
-function init() {
+async function init() {
+    const comments = await fetchComments()
+
+    setComments(comments)
+
     renderComments()
+
     initLikeListeners()
     initQuoteListeners()
     initAddCommentListener()
