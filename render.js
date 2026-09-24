@@ -1,4 +1,4 @@
-import { commentsData } from './data.js'
+import { getComments } from './data.js'
 
 export function escapeHtml(text) {
     return text
@@ -8,18 +8,25 @@ export function escapeHtml(text) {
         .replaceAll("'", '&#039;')
 }
 
-import { format } from 'date-fns'
+export function formatDate(dateString) {
+    if (!dateString) return ''
 
-export function getCurrentDate() {
-    return format(new Date(), 'dd.MM.yy HH:mm')
+    const date = new Date(dateString)
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const year = String(date.getFullYear()).slice(-2)
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${day}.${month}.${year} ${hours}:${minutes}`
 }
 
 export function renderComments() {
     const commentsList = document.querySelector('.comments')
-
     commentsList.innerHTML = ''
 
-    commentsData.forEach((comment, index) => {
+    const comments = getComments()
+
+    comments.forEach((comment, index) => {
         const li = document.createElement('li')
         li.className = 'comment'
         li.dataset.index = index
@@ -28,10 +35,10 @@ export function renderComments() {
         header.className = 'comment-header'
 
         const nameDiv = document.createElement('div')
-        nameDiv.textContent = comment.name
+        nameDiv.textContent = comment.author.name
 
         const dateDiv = document.createElement('div')
-        dateDiv.textContent = comment.date
+        dateDiv.textContent = formatDate(comment.createdAt || comment.date)
 
         header.appendChild(nameDiv)
         header.appendChild(dateDiv)
@@ -53,7 +60,7 @@ export function renderComments() {
 
         const counter = document.createElement('span')
         counter.className = 'likes-counter'
-        counter.textContent = comment.likes
+        counter.textContent = comment.likes || 0
 
         const likeBtn = document.createElement('button')
         likeBtn.className = comment.isLiked
