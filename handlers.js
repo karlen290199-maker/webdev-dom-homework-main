@@ -1,6 +1,6 @@
-import { getComments } from './data.js'
+import { getComments, setComments } from './data.js'
 import { renderComments, escapeHtml } from './render.js'
-import { postComment } from './api.js'
+import { postComment, fetchComments } from './api.js'
 
 export function initLikeListeners() {
     const likeButtons = document.querySelectorAll('.like-button')
@@ -89,21 +89,30 @@ async function handleAddComment() {
     const name = nameInput.value.trim()
     const text = textInput.value.trim()
 
+    // Валидация
     if (!name || !text) {
         alert('Пожалуйста, заполните имя и комментарий')
         return
     }
 
+    if (name.length < 3) {
+        alert('Имя должно содержать хотя бы 3 символа')
+        return
+    }
+
+    if (text.length < 3) {
+        alert('Комментарий должен содержать хотя бы 3 символа')
+        return
+    }
+
     try {
-        const newComment = await postComment({ name, text })
-
-        console.log('Что вернул POST:', newComment)
-
-        const comments = getComments()
-        comments.push(newComment)
+        await postComment({ name, text })
 
         nameInput.value = ''
         textInput.value = ''
+
+        const comments = await fetchComments()
+        setComments(comments)
 
         renderComments()
         initLikeListeners()

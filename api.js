@@ -17,16 +17,15 @@ export async function fetchComments() {
     }
 }
 
-export async function postComment(commentData) {
+export async function postComment({ name, text }) {
     const response = await fetch(API_URL, {
         method: 'POST',
-        // ★ УБРАЛИ headers полностью!
-        body: JSON.stringify(commentData),
+        body: JSON.stringify({ name, text }),
     })
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
-        console.error('Ответ сервера:', errorData)
+        console.error('Ответ сервера (детально):', JSON.stringify(errorData))
         throw new Error('Не удалось добавить комментарий')
     }
 
