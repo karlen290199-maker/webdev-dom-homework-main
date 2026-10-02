@@ -16,6 +16,14 @@ export function initQuoteListeners() {
     })
 }
 
+function delay(interval = 300) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve()
+        }, interval)
+    })
+}
+
 function handleLikeClick(event) {
     const button = event.target
 
@@ -28,17 +36,22 @@ function handleLikeClick(event) {
     const comments = getComments()
     const comment = comments[index]
 
-    if (comment.isLiked) {
-        comment.isLiked = false
-        comment.likes -= 1
-    } else {
-        comment.isLiked = true
-        comment.likes += 1
-    }
+    comment.isLikeLoading = true
 
     renderComments()
     initLikeListeners()
     initQuoteListeners()
+
+    delay(2000).then(() => {
+        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
+
+        comment.isLiked = !comment.isLiked
+        comment.isLikeLoading = false
+
+        renderComments()
+        initLikeListeners()
+        initQuoteListeners()
+    })
 }
 
 function handleQuoteClick(event) {
@@ -82,14 +95,15 @@ export function initAddCommentListener() {
     })
 }
 
-async function handleAddComment() {
+function handleAddComment() {
     const nameInput = document.querySelector('.add-form-name')
     const textInput = document.querySelector('.add-form-text')
+    const addForm = document.querySelector('.add-form')
+    const addFormLoading = document.querySelector('.add-form-loading')
 
     const name = nameInput.value.trim()
     const text = textInput.value.trim()
 
-    // Валидация
     if (!name || !text) {
         alert('Пожалуйста, заполните имя и комментарий')
         return
@@ -105,20 +119,28 @@ async function handleAddComment() {
         return
     }
 
-    try {
-        await postComment({ name, text })
+    addForm.style.display = 'none'
+    addFormLoading.style.display = 'block'
 
-        nameInput.value = ''
-        textInput.value = ''
+    postComment({ name, text })
+        .then(() => {
+            nameInput.value = ''
+            textInput.value = ''
+            return fetchComments()
+        })
+        .then((comments) => {
+            setComments(comments)
 
-        const comments = await fetchComments()
-        setComments(comments)
-
-        renderComments()
-        initLikeListeners()
-        initQuoteListeners()
-    } catch (error) {
-        console.error('Ошибка при добавлении:', error)
-        alert('Не удалось добавить комментарий')
-    }
+            renderComments()
+            initLikeListeners()
+            initQuoteListeners()
+        })
+        .catch((error) => {
+            console.error('Ошибка при добавлении:', error)
+            alert('Не удалось добавить комментарий')
+        })
+        .finally(() => {
+            addForm.style.display = 'flex'
+            addFormLoading.style.display = 'none'
+        })
 }

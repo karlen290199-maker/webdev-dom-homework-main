@@ -7,15 +7,31 @@ import {
 import { fetchComments } from './api.js'
 import { setComments } from './data.js'
 
-async function init() {
-    const comments = await fetchComments()
+export function loadComments() {
+    const loadingComments = document.querySelector('.loading-comments')
 
-    setComments(comments)
+    loadingComments.style.display = 'block'
 
-    renderComments()
+    fetchComments()
+        .then((comments) => {
+            setComments(comments)
 
-    initLikeListeners()
-    initQuoteListeners()
+            renderComments()
+            initLikeListeners()
+            initQuoteListeners()
+        })
+        .catch((error) => {
+            console.error('Ошибка загрузки:', error)
+            alert('Не удалось загрузить комментарии')
+        })
+        .finally(() => {
+            loadingComments.style.display = 'none'
+        })
+}
+
+function init() {
+    loadComments()
+
     initAddCommentListener()
 }
 
