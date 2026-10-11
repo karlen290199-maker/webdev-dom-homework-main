@@ -44,7 +44,6 @@ function handleLikeClick(event) {
 
     delay(2000).then(() => {
         comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
-
         comment.isLiked = !comment.isLiked
         comment.isLikeLoading = false
 
@@ -109,16 +108,6 @@ function handleAddComment() {
         return
     }
 
-    if (name.length < 3) {
-        alert('Имя должно содержать хотя бы 3 символа')
-        return
-    }
-
-    if (text.length < 3) {
-        alert('Комментарий должен содержать хотя бы 3 символа')
-        return
-    }
-
     addForm.style.display = 'none'
     addFormLoading.style.display = 'block'
 
@@ -126,6 +115,7 @@ function handleAddComment() {
         .then(() => {
             nameInput.value = ''
             textInput.value = ''
+
             return fetchComments()
         })
         .then((comments) => {
@@ -136,8 +126,11 @@ function handleAddComment() {
             initQuoteListeners()
         })
         .catch((error) => {
-            console.error('Ошибка при добавлении:', error)
-            alert('Не удалось добавить комментарий')
+            if (error.message === 'Ошибка сервера') {
+                handleAddComment()
+            } else {
+                alert(error.message)
+            }
         })
         .finally(() => {
             addForm.style.display = 'flex'

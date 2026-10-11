@@ -21,8 +21,7 @@ export function loadComments() {
             initQuoteListeners()
         })
         .catch((error) => {
-            console.error('Ошибка загрузки:', error)
-            alert('Не удалось загрузить комментарии')
+            alert(error.message)
         })
         .finally(() => {
             loadingComments.style.display = 'none'
@@ -31,7 +30,6 @@ export function loadComments() {
 
 function init() {
     loadComments()
-
     initAddCommentListener()
 }
 
