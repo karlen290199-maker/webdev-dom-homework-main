@@ -62,14 +62,9 @@ function handleQuoteClick(event) {
     const comments = getComments()
     const comment = comments[index]
 
-    const nameInput = document.querySelector('.add-form-name')
     const textInput = document.querySelector('.add-form-text')
 
-    const authorName = comment.author?.name || comment.name || 'Без имени'
-    const safeName = escapeHtml(authorName)
     const safeText = escapeHtml(comment.text)
-
-    nameInput.value = safeName
 
     const quotedText = safeText
         .split('\n')
