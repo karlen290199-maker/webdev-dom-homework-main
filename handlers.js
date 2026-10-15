@@ -1,6 +1,7 @@
 import { getComments, setComments } from './data.js'
 import { renderComments, escapeHtml } from './render.js'
 import { postComment, fetchComments } from './api.js'
+import { getUser } from './auth.js'
 
 export function initLikeListeners() {
     const likeButtons = document.querySelectorAll('.like-button')
@@ -98,6 +99,13 @@ function handleAddComment() {
     const name = nameInput.value.trim()
     const text = textInput.value.trim()
 
+    const user = getUser()
+
+    if (!user?.token) {
+        window.location.href = 'login.html'
+        return
+    }
+
     if (!name || !text) {
         alert('Пожалуйста, заполните имя и комментарий')
         return
@@ -106,7 +114,7 @@ function handleAddComment() {
     addForm.style.display = 'none'
     addFormLoading.style.display = 'block'
 
-    postComment({ name, text })
+    postComment({ name: user.name, text, token: user.token })
         .then(() => {
             nameInput.value = ''
             textInput.value = ''
