@@ -1,7 +1,12 @@
+Hw4
+import { getComments } from './data.js'
+import { renderComments, escapeHtml } from './render.js'
+import { postComment } from './api.js'
 import { getComments, setComments } from './data.js'
 import { renderComments, escapeHtml } from './render.js'
 import { postComment, fetchComments } from './api.js'
 import { getUser } from './auth.js'
+main
 
 export function initLikeListeners() {
     const likeButtons = document.querySelectorAll('.like-button')
@@ -37,7 +42,16 @@ function handleLikeClick(event) {
     const comments = getComments()
     const comment = comments[index]
 
+Hw4
+    if (comment.isLiked) {
+        comment.isLiked = false
+        comment.likes -= 1
+    } else {
+        comment.isLiked = true
+        comment.likes += 1
+    }
     comment.isLikeLoading = true
+main
 
     renderComments()
     initLikeListeners()
@@ -59,12 +73,21 @@ function handleQuoteClick(event) {
 
     const commentElement = event.currentTarget
     const index = parseInt(commentElement.dataset.index)
+Hw4
+
+    const comments = getComments()
+    const comment = comments[index]
+main
 
     const comments = getComments()
     const comment = comments[index]
 
     const textInput = document.querySelector('.add-form-text')
 
+Hw4
+    const authorName = comment.author?.name || comment.name || 'Без имени'
+    const safeName = escapeHtml(authorName)
+main
     const safeText = escapeHtml(comment.text)
 
     const quotedText = safeText
@@ -90,7 +113,7 @@ export function initAddCommentListener() {
     })
 }
 
-function handleAddComment() {
+async function handleAddComment() {
     const nameInput = document.querySelector('.add-form-name')
     const textInput = document.querySelector('.add-form-text')
     const addForm = document.querySelector('.add-form')
@@ -99,18 +122,41 @@ function handleAddComment() {
     const name = nameInput.value.trim()
     const text = textInput.value.trim()
 
+Hw4
+    const name = nameInput.value.trim()
+    const text = textInput.value.trim()
     const user = getUser()
 
     if (!user?.token) {
         window.location.href = 'login.html'
         return
     }
+main
 
     if (!name || !text) {
         alert('Пожалуйста, заполните имя и комментарий')
         return
     }
 
+Hw4
+    try {
+        const newComment = await postComment({ name, text })
+
+        console.log('Что вернул POST:', newComment)
+
+        const comments = getComments()
+        comments.push(newComment)
+
+        nameInput.value = ''
+        textInput.value = ''
+
+        renderComments()
+        initLikeListeners()
+        initQuoteListeners()
+    } catch (error) {
+        console.error('Ошибка при добавлении:', error)
+        alert('Не удалось добавить комментарий')
+    }
     addForm.style.display = 'none'
     addFormLoading.style.display = 'block'
 
@@ -139,4 +185,5 @@ function handleAddComment() {
             addForm.style.display = 'flex'
             addFormLoading.style.display = 'none'
         })
+main
 }

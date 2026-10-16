@@ -7,6 +7,16 @@ import {
 import { fetchComments } from './api.js'
 import { setComments } from './data.js'
 
+Hw4
+async function init() {
+    const comments = await fetchComments()
+
+    setComments(comments)
+
+    renderComments()
+
+    initLikeListeners()
+    initQuoteListeners()
 export function loadComments() {
     const loadingComments = document.querySelector('.loading-comments')
 
@@ -30,6 +40,7 @@ export function loadComments() {
 
 function init() {
     loadComments()
+main
     initAddCommentListener()
 }
 
