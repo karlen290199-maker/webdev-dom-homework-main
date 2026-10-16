@@ -1,4 +1,5 @@
 import { getComments } from './data.js'
+import { isAuthorized } from './auth.js'
 
 export function escapeHtml(text) {
     return text
@@ -66,6 +67,12 @@ export function renderComments() {
         likeBtn.className = comment.isLiked
             ? 'like-button -active-like'
             : 'like-button'
+
+        if (!isAuthorized()) {
+            likeBtn.disabled = true
+            likeBtn.style.opacity = '0.5'
+            likeBtn.style.cursor = 'not-allowed'
+        }
 
         if (comment.isLikeLoading) {
             likeBtn.classList.add('-loading-like')
