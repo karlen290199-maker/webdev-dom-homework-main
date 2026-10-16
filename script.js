@@ -8,6 +8,16 @@ import { fetchComments } from './api.js'
 import { setComments } from './data.js'
 import { isAuthorized, logoutUser, login } from './auth.js'
 
+Hw4
+async function init() {
+    const comments = await fetchComments()
+
+    setComments(comments)
+
+    renderComments()
+
+    initLikeListeners()
+    initQuoteListeners()
 export function loadComments() {
     const loadingComments = document.querySelector('.loading-comments')
     loadingComments.style.display = 'block'
@@ -96,6 +106,7 @@ function initAuthListeners() {
 
 function init() {
     loadComments()
+main
     initAddCommentListener()
     updateAuthUI()
     initAuthListeners()

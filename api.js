@@ -1,4 +1,40 @@
+hw8-auth
 import { getToken } from './auth.js'
+const API_URL = 'https://wedev-api.sky.pro/api/v1/gleb-fokin/comments'
+Hw4
+
+export async function fetchComments() {
+    try {
+        const response = await fetch(API_URL)
+
+        if (!response.ok) {
+            throw new Error(`Ошибка загрузки: ${response.status}`)
+        }
+
+        const data = await response.json()
+
+        return data.comments
+    } catch (error) {
+        console.error('Ошибка при загрузке комментариев:', error)
+        return []
+    }
+}
+
+export async function postComment(commentData) {
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(commentData),
+    })
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Ответ сервера:', errorData)
+        throw new Error('Не удалось добавить комментарий')
+    }
+
+    return await response.json()
+const AUTH_TOKEN = 'bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck'
+main
 
 const API_URL = 'https://wedev-api.sky.pro/api/v2/gleb-fokin/comments'
 const USERS_API_URL = 'https://wedev-api.sky.pro/api/user'
@@ -110,6 +146,7 @@ export function registerUser({ login, name, password }) {
         method: 'POST',
         body: JSON.stringify({ login, name, password }),
     })
+hw8-auth
         .then((response) => {
             if (!response.ok) {
                 return response.json().then((data) => {
@@ -127,4 +164,7 @@ export function registerUser({ login, name, password }) {
             }
             throw error
         })
+
+  main
+main
 }
