@@ -7,6 +7,7 @@ import {
 import { fetchComments } from './api.js'
 import { setComments } from './data.js'
 
+Hw4
 async function init() {
     const comments = await fetchComments()
 
@@ -16,6 +17,30 @@ async function init() {
 
     initLikeListeners()
     initQuoteListeners()
+export function loadComments() {
+    const loadingComments = document.querySelector('.loading-comments')
+
+    loadingComments.style.display = 'block'
+
+    fetchComments()
+        .then((comments) => {
+            setComments(comments)
+
+            renderComments()
+            initLikeListeners()
+            initQuoteListeners()
+        })
+        .catch((error) => {
+            alert(error.message)
+        })
+        .finally(() => {
+            loadingComments.style.display = 'none'
+        })
+}
+
+function init() {
+    loadComments()
+main
     initAddCommentListener()
 }
 

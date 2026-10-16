@@ -66,6 +66,10 @@ export function renderComments() {
         likeBtn.className = comment.isLiked
             ? 'like-button -active-like'
             : 'like-button'
+
+        if (comment.isLikeLoading) {
+            likeBtn.classList.add('-loading-like')
+        }
         likeBtn.dataset.index = index
 
         likes.appendChild(counter)
