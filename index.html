@@ -7,28 +7,40 @@
     </head>
 
     <body>
+        <div class="header">
+            <button class="login-button">Войти</button>
+            <button class="logout-button hidden">Выйти</button>
+        </div>
+
+        <div class="login-form hidden">
+            <h2>Вход</h2>
+            <input type="text" class="login-input" placeholder="Логин" />
+            <input type="password" class="password-input" placeholder="Пароль" />
+            <button class="login-submit">Войти</button>
+            <div class="login-error hidden"></div>
+        </div>
+
         <div class="container">
-            <div>
-            <a href="login.html" class="login-button">Войти</a>
-            </div>
             <div class="loading-comments">Комментарии загружаются...</div>
             <ul class="comments"></ul>
-            <div class="add-form">
+
+            <div class="add-form hidden">
                 <input
                     type="text"
                     class="add-form-name"
                     placeholder="Введите ваше имя"
+                    readonly
                 />
                 <textarea
-                    type="textarea"
                     class="add-form-text"
-                    placeholder="Введите ваш коментарий"
+                    placeholder="Введите ваш комментарий"
                     rows="4"
                 ></textarea>
                 <div class="add-form-row">
                     <button class="add-form-button">Написать</button>
                 </div>
             </div>
+
             <div class="add-form-loading">Комментарий добавляется...</div>
         </div>
     </body>

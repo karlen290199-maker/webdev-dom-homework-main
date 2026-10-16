@@ -1,7 +1,7 @@
 import { getComments, setComments } from './data.js'
 import { renderComments, escapeHtml } from './render.js'
-import { postComment, fetchComments } from './api.js'
-import { getUser } from './auth.js'
+import { postComment, fetchComments, toggleLike } from './api.js'
+import { isAuthorized, getUser } from './auth.js'
 
 export function initLikeListeners() {
     const likeButtons = document.querySelectorAll('.like-button')
@@ -17,18 +17,15 @@ export function initQuoteListeners() {
     })
 }
 
-function delay(interval = 300) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve()
-        }, interval)
-    })
-}
-
 function handleLikeClick(event) {
     const button = event.target
 
     if (!button.classList.contains('like-button')) return
+
+    if (!isAuthorized()) {
+        alert('Войдите, чтобы поставить лайк')
+        return
+    }
 
     event.stopPropagation()
 
@@ -43,15 +40,23 @@ function handleLikeClick(event) {
     initLikeListeners()
     initQuoteListeners()
 
-    delay(2000).then(() => {
-        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1
-        comment.isLiked = !comment.isLiked
-        comment.isLikeLoading = false
+    toggleLike(comment.id)
+        .then((result) => {
+            comment.likes = result.likes
+            comment.isLiked = result.isLiked
+            comment.isLikeLoading = false
 
-        renderComments()
-        initLikeListeners()
-        initQuoteListeners()
-    })
+            renderComments()
+            initLikeListeners()
+            initQuoteListeners()
+        })
+        .catch((error) => {
+            comment.isLikeLoading = false
+            renderComments()
+            initLikeListeners()
+            initQuoteListeners()
+            alert(error.message)
+        })
 }
 
 function handleQuoteClick(event) {
@@ -79,6 +84,14 @@ function handleQuoteClick(event) {
 
 export function initAddCommentListener() {
     const addButton = document.querySelector('.add-form-button')
+    const nameInput = document.querySelector('.add-form-name')
+
+    if (isAuthorized()) {
+        const user = getUser()
+        nameInput.value = user.name || user.login || ''
+        nameInput.readOnly = true
+    }
+
     addButton.addEventListener('click', handleAddComment)
 
     const textInput = document.querySelector('.add-form-text')
@@ -91,39 +104,32 @@ export function initAddCommentListener() {
 }
 
 function handleAddComment() {
-    const nameInput = document.querySelector('.add-form-name')
     const textInput = document.querySelector('.add-form-text')
     const addForm = document.querySelector('.add-form')
     const addFormLoading = document.querySelector('.add-form-loading')
 
-    const name = nameInput.value.trim()
     const text = textInput.value.trim()
 
-    const user = getUser()
-
-    if (!user?.token) {
-        window.location.href = 'login.html'
+    if (!text) {
+        alert('Введите комментарий')
         return
     }
 
-    if (!name || !text) {
-        alert('Пожалуйста, заполните имя и комментарий')
+    if (text.length < 3) {
+        alert('Комментарий должен содержать хотя бы 3 символа')
         return
     }
 
     addForm.style.display = 'none'
     addFormLoading.style.display = 'block'
 
-    postComment({ name: user.name, text, token: user.token })
+    postComment({ text })
         .then(() => {
-            nameInput.value = ''
             textInput.value = ''
-
             return fetchComments()
         })
         .then((comments) => {
             setComments(comments)
-
             renderComments()
             initLikeListeners()
             initQuoteListeners()
