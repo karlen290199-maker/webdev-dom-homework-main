@@ -13,18 +13,27 @@ export function fetchComments() {
         headers: getHeaders(),
     })
         .then((response) => {
-            if (response.status === 500) {
-                throw new Error('Ошибка сервера')
-            }
-            if (response.status === 401 || response.status === 403) {
-                throw new Error('Ошибка авторизации: проверьте токен')
-            }
             if (!response.ok) {
-                throw new Error('Ошибка загрузки')
+                return response
+                    .json()
+                    .then((err) => {
+                        throw new Error(err.error || 'Ошибка загрузки')
+                    })
+                    .catch(() => {
+                        throw new Error('Ошибка загрузки')
+                    })
             }
             return response.json()
         })
-        .then((data) => data.comments)
+        .then((data) => {
+            if (Array.isArray(data)) {
+                return data
+            }
+            if (data && data.comments) {
+                return data.comments
+            }
+            return []
+        })
         .catch((error) => {
             if (error.message === 'Failed to fetch') {
                 throw new Error('Кажется, у вас пропал интернет')
