@@ -146,3 +146,4 @@ function handleAddComment() {
             addFormLoading.style.display = 'none'
         })
 }
+

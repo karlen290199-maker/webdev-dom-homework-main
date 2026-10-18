@@ -60,3 +60,4 @@ export function login(loginValue, passwordValue) {
             throw error
         })
 }
+

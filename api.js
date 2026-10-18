@@ -137,3 +137,4 @@ export function registerUser({ login, name, password }) {
             throw error
         })
 }
+

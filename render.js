@@ -90,3 +90,4 @@ export function renderComments() {
         commentsList.appendChild(li)
     })
 }
+
