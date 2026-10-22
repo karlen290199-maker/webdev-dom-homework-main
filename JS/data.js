@@ -21,3 +21,4 @@ export function setComments(newComments) {
 export function getNextId() {
     return nextId++
 }
+

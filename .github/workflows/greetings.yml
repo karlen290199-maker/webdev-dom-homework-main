@@ -13,3 +13,4 @@ jobs:
       with:
         # Optional. Post a issue comment just before closing a pull request.
         comment: "Привет! Сделай пожалуйста Pull Request в свой репозиторий, сейчас ты сделал PR в репозиторий Глеба. Посмотри в домашке, там на скриншоте нарисовано где выбрать свой репозиторий"
+        

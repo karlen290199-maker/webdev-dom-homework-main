@@ -21,3 +21,4 @@ form.addEventListener('submit', async (event) => {
         errorElement.textContent = error.message
     }
 })
+
